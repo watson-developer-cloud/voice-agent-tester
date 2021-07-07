@@ -1,0 +1,43 @@
+{
+    "name":"Tc1",
+    "namespace": "test",
+    "turns": [
+      {
+        "receive": {
+          "type": "regex",
+          "value": "(.*)"
+        },
+        "send": {
+          "type": "string",
+          "value": "hello"
+        }
+      },{
+        "receive": {
+          "type": "regex",
+          "value": "(.*)"
+        },
+        "send": {
+          "type": "string",
+          "value": "Testing"
+        }
+      },{
+        "receive": {
+          "type": "regex",
+          "value": "(.*)"
+        },
+        "send": {
+          "type": "string",
+          "value": "Testing"
+        }
+      },{
+        "receive": {
+          "type": "regex",
+          "value": "(.*)"
+        },
+        "send": {
+          "type": "string",
+          "value": "Bye"
+        }
+      }
+    ]
+  }

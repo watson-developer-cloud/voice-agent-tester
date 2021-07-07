@@ -1,0 +1,16 @@
+{
+    "name":"Tc1",
+    "namespace": "test2",
+    "turns": [
+      {
+        "receive": {
+          "type": "string",
+          "value": "hello"
+        },
+        "send": {
+          "type": "string",
+          "value": "hello"
+        }
+      }
+    ]
+  }

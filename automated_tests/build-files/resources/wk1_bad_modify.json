@@ -1,0 +1,10 @@
+{
+    "name":"wk1",
+    "description":"modified",
+    "iterations":1,
+    "namespace":"test2",
+    "callDefinition":{
+        "to":"sip:",
+        "from":"sip:"
+    }
+}

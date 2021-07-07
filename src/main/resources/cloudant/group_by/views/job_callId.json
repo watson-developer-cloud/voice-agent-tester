@@ -1,0 +1,3 @@
+{
+"map": "function (doc) {\n  if(doc._id && doc.callMetadata){\n    var regex=/([a-z]|[0-9])+_([[a-z]|[0-9])+/\n    if(regex.test(doc._id))\n      emit(doc.callMetadata, doc);\n  }\n}"
+}

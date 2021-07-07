@@ -1,0 +1,4 @@
+-verbose:gc
+-Xverbosegclog:/logs/verbosegc.%pid.%seq.log,20,10000
+-Xmx1G
+-Xms1G

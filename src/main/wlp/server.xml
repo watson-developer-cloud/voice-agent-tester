@@ -1,0 +1,114 @@
+<!-- 
+/* ***************************************************************** */
+/*                                                                   */
+/* Licensed Materials - Property of IBM                              */
+/*                                                                   */
+/* (C) Copyright IBM Corp. 2019. All Rights Reserved.                */
+/*                                                                   */
+/* US Government Users Restricted Rights - Use, duplication or       */
+/* disclosure restricted by GSA ADP Schedule Contract with IBM Corp. */
+/*                                                                   */
+/* ***************************************************************** */
+ -->
+<server description="new server">
+
+
+	<featureManager>
+		<feature>cdi-2.0</feature>
+		<feature>jaxrs-2.1</feature>
+		<feature>mpConfig-1.3</feature>
+		<feature>mpRestClient-1.1</feature>
+		<feature>mpOpenAPI-1.0</feature>
+		<feature>jsonb-1.0</feature>
+		<!-- The above fatures can be mapped to the only one feature included below -->
+		<!--feature>microProfile-2.1</feature-->
+		<!--feature>webProfile-8.0</feature-->
+		<feature>appSecurity-3.0</feature>
+		<feature>appSecurity-2.0</feature>
+		<feature>beanValidation-2.0</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>transportSecurity-1.0</feature>
+		<feature>jndi-1.0</feature>
+		<feature>webCache-1.0</feature>
+		<feature>concurrent-1.0</feature>
+	</featureManager>
+
+	<httpEndpoint httpPort="${env.HTTP_PORT}"
+		httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint" host="${env.HTTP_HOST}" />
+
+	<logging maxFileSize="${env.LOG_MAX_FILE_SIZE}" maxFiles="${env.LOG_MAX_FILES}" traceSpecification="*=info:ibm.testing.microservice.api=${env.LOG_LEVEL}"/>
+
+	<application location="${server.config.dir}/apps/va-tester-api.war" type="war" id="va-tester-api"
+                 name="va-tester-api" context-root="/voice-agent-tester">
+		<application-bnd>
+			<!--  Access to all REST calls -->
+			<security-role name="testerAdministrator">
+				<group name="${env.ROLE_NAME_ADMINISTRATOR}" />
+			</security-role>
+			<!--  Access to all REST calls -->
+			<security-role name="testerEditor">
+				<group name="${env.ROLE_NAME_EDITOR}" />
+			</security-role>
+			<!--  Access only to REST GETs and Job REST calls -->
+			<security-role name="testerOperator">
+				<group name="${env.ROLE_NAME_OPERATOR}" />
+			</security-role>
+			<!--  Access only to REST GETs -->
+			<security-role name="testerViewer">
+				<group name="${env.ROLE_NAME_VIEWER}" />
+			</security-role>
+			<!--  Access only to Validation Endpoints -->
+			<security-role name="testerWebhook">
+				<user name="${env.TESTER_WEBHOOK_USERNAME}"/>
+			</security-role>
+    	</application-bnd>
+    </application>
+
+	<!-- Basic Registry in include-->
+   <include optional="true" location="${env.SERVER_REGISTRY_INCLUDE_PATH}" />
+
+    <ssl clientAuthenticationSupported="true" id="defaultSSLConfig" keyStoreRef="defaultKeyStore" trustStoreRef="defaultTrustStore" sslProtocol="TLSv1.2"/>
+    <keyStore id="defaultKeyStore" location="${env.SSL_KEY_STORE_FILE}" password="${env.SSL_KEY_PASSPHRASE}" type="${env.SSL_KEY_FILE_TYPE}"/>
+    <keyStore id="defaultTrustStore" location="${env.SSL_TRUST_STORE_FILE}" password="${env.SSL_TRUST_PASSPHRASE}" type="${env.SSL_TRUST_FILE_TYPE}"/>
+    
+    <jndiEntry jndiName="cloudantResources" value="${server.config.dir}/resources/cloudant/"/>
+    <jndiEntry jndiName="CLOUDANT_ACCOUNT" value="${env.CLOUDANT_ACCOUNT}"/>
+    <jndiEntry jndiName="CLOUDANT_USERNAME" value="${env.CLOUDANT_USERNAME}"/>
+    <jndiEntry jndiName="CLOUDANT_PASSWORD" value="${env.CLOUDANT_PASSWORD}"/>
+    <jndiEntry jndiName="CLOUDANT_APIKEY" value="${env.CLOUDANT_APIKEY}"/>
+    <jndiEntry jndiName="CLOUDANT_URL" value="${env.CLOUDANT_URL}"/> 
+	<jndiEntry jndiName="CLOUDANT_DATABASE_NAME" value="${env.CLOUDANT_DATABASE_NAME}"/>
+	<jndiEntry jndiName="TESTER_WEBHOOK_URI" value="${env.TESTER_WEBHOOK_URI}"/>
+	<jndiEntry jndiName="CALLER_VOICE_GATEWAY_URI" value="${env.CALLER_VOICE_GATEWAY_URI}"/>
+	<jndiEntry jndiName="CALLER_VOICE_GATEWAY_USERNAME" value="${env.CALLER_VOICE_GATEWAY_USERNAME}"/>
+    <jndiEntry jndiName="CALLER_VOICE_GATEWAY_PASSWORD" value="${env.CALLER_VOICE_GATEWAY_PASSWORD}"/>
+	<jndiEntry jndiName="CACHE_TIME_TO_LIVE" value="${env.CACHE_TIME_TO_LIVE}"/> 
+	<jndiEntry jndiName="TESTER_WEBHOOK_USERNAME" value="${env.TESTER_WEBHOOK_USERNAME}"/>
+    <jndiEntry jndiName="TESTER_WEBHOOK_PASSWORD" value="${env.TESTER_WEBHOOK_PASSWORD}"/>
+	<jndiEntry jndiName="CACHE_IMPLEMENTATION" value="${env.CACHE_IMPLEMENTATION}"/>
+
+
+	<distributedMap jndiName="services/cache/samplecache" id="sample">
+    	<diskCache></diskCache>
+    </distributedMap>
+
+	<webContainer addstricttransportsecurityheader="max-age=31536000; includeSubDomains" />
+
+	<concurrencyPolicy id="normal" max="10" maxQueueSize="50" maxWaitForEnqueue="300ms" runIfQueueFull="true"/>
+    <managedScheduledExecutorService jndiName="concurrent/scheduledExecutor" contextServiceRef="contextSvc" concurrencyPolicyRef="normal"/>
+    <contextService id="contextSvc">
+        <jeeMetadataContext/>
+        <classloaderContext/>
+    </contextService>
+
+	<managedScheduledExecutorService jndiName="cloudant/scheduledExecutor" contextServiceRef="contextSvcCloudant" concurrencyPolicyRef="normal"/>
+    <contextService id="contextSvcCloudant">
+        <jeeMetadataContext/>
+    </contextService>
+
+	<managedScheduledExecutorService jndiName="webhook/scheduledExecutor" contextServiceRef="contextSvcWebhook" concurrencyPolicyRef="normal"/>
+    <contextService id="contextSvcWebhook">
+        <jeeMetadataContext/>
+    </contextService>
+
+</server>

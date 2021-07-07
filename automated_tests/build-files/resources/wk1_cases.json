@@ -1,0 +1,10 @@
+{
+    "name":"wk1",
+    "description":"modified",
+    "iterations":2,
+    "callDefinition":{
+        "to":"sip:",
+        "from":"sip:"
+    },
+    "cases":[]
+}

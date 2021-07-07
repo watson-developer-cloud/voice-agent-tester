@@ -1,0 +1,3 @@
+{
+"map": "function (doc) {\n  if(doc.name && doc.namespace && doc.turns)\n    emit(doc.namespace, null);\n}"
+}

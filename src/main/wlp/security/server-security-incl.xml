@@ -1,0 +1,28 @@
+<!-- 
+/* ***************************************************************** */
+/*                                                                   */
+/* Licensed Materials - Property of IBM                              */
+/*                                                                   */
+/* (C) Copyright IBM Corp. 2019. All Rights Reserved.                */
+/*                                                                   */
+/* US Government Users Restricted Rights - Use, duplication or       */
+/* disclosure restricted by GSA ADP Schedule Contract with IBM Corp. */
+/*                                                                   */
+/* ***************************************************************** */
+ -->
+<server>
+   <basicRegistry id="basic" realm="testerBasicRegistry">
+
+      <!-- !!!!!!  IMPORTANT  !!!!!! -->
+		<!-- THIS USER MUST ALWAYS BE INCLUDED ALONG WITH ANY OTHER USER YOU WHISH TO ADD -->
+		<!-- THIS IS THE USER AND PASSWORD THAT IS USED FOR ADDING SECURITY TO THE TESTER WEBHOOK ENDPOINTS -->
+      <user name="${env.TESTER_WEBHOOK_USERNAME}" password="${env.TESTER_WEBHOOK_PASSWORD}"/>
+
+      <!-- replace / add user -->
+      <user name="${env.REST_ADMIN_USERNAME}" password="${env.REST_ADMIN_PASSWORD}" />
+      <!--  Access to all REST calls -->
+      <group name="${env.ROLE_NAME_ADMINISTRATOR}">
+         <member name="${env.REST_ADMIN_USERNAME}" />
+      </group>
+   </basicRegistry>
+</server>

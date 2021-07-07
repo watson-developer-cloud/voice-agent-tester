@@ -1,0 +1,19 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  creationTimestamp: 2018-11-28T14:12:13Z
+  name: allow-kubelet-rtp
+  resourceVersion: "608559"
+  uid: 9a309aa0-f317-11e8-8a6b-acbc3296f0b9
+spec:
+  ingress:
+  - action: Allow
+    destination:
+      ports:
+      - 16384:16584
+    protocol: UDP
+    source: {}
+  order: 1500
+  selector: ibm.role in { 'worker_public', 'master_public' }
+  types:
+  - Ingress

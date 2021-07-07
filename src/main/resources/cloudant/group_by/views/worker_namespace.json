@@ -1,0 +1,3 @@
+{
+"map": "function (doc) {\n  if(doc.name && doc.namespace && doc.iterations>=0 && doc.callDefinition && doc.cases)\n    emit(doc.namespace, null);\n}"
+}

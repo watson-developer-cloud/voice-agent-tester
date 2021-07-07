@@ -1,0 +1,170 @@
+version: "3.3"
+services:
+
+  at.microservice:
+    # container_name: testing-microservice
+    image: ${TESTER_IMAGE}
+    # networks:
+    #   - tester-bundle
+    environment:
+      #Connection and microservice variables
+      - REST_ADMIN_USERNAME=${restAdmin}
+      - REST_ADMIN_PASSWORD=${restPassword}
+      - TESTER_WEBHOOK_USERNAME=testerWebhookUser
+      - TESTER_WEBHOOK_PASSWORD=testerWebhookPassword
+
+      #Cloudant variables
+      - CLOUDANT_URL=http://couchdb:5984
+      - CLOUDANT_USERNAME=admin
+      - CLOUDANT_PASSWORD=passw0rd
+      - CLOUDANT_DATABASE_NAME=automated_test
+      # Voice Gateway User Agent Client variables
+      - CALLER_VOICE_GATEWAY_URI=http://sip.orchestrator:9080
+      - CALLER_VOICE_GATEWAY_USERNAME=outboundCallsUser
+      - CALLER_VOICE_GATEWAY_PASSWORD=outboundCallsPass
+      # Logging variables
+      - LOG_LEVEL=all
+      - LOG_MAX_FILE_SIZE=100
+      - LOG_MAX_FILES=10
+
+    # volumes:
+    #   - ./logs/AT:/logs
+
+  sip.orchestrator:
+    image: ${SO_IMAGE}
+
+    # container_name: voice-gateway-so-tester # test
+    # networks:
+    #   tester-bundle:
+    #     ipv4_address: 173.16.238.10
+    environment:
+      # Host name of the CMR.
+      - MEDIA_RELAY_HOST=media.relay:8080
+      - SIP_HOST=sip.orchestrator
+      - HTTP_HOST=*
+      - REST_API_USERNAME=outboundCallsUser
+      - REST_API_PASSWORD=outboundCallsPass
+
+      - ENABLE_OUTBOUND_CALLS=true
+      # Logging related variables
+      - ENABLE_TRANSCRIPTION_AUDIT_MESSAGES=true
+      - LOG_LEVEL=all
+      - LOG_MAX_FILE_SIZE=100
+      - LOG_MAX_FILES=10
+
+    # volumes:
+    #   - ./logs/caller-SO:/logs
+
+  media.relay:
+    image: ${MR_IMAGE}
+
+    # container_name: voice-gateway-mr-tester
+    # networks:
+    #   - tester-bundle
+    environment:
+      - SDP_ADDRESS=media.relay
+      - RTP_UDP_PORT_RANGE=16334-16394
+      - MEDIA_RELAY_LOG_LEVEL=DEBUG
+      - MEDIA_RELAY_WS_PORT=8080
+      - STT_TRACK_LATENCY=true
+
+      # Creds for Bluemix STT
+      - WATSON_STT_APIKEY=${WATSON_STT_APIKEY}
+      - WATSON_STT_TOKEN_SERVICE_PROVIDER_URL=${PROV_URL}
+      - WATSON_STT_URL=${STT_URL}
+
+      # Creds for Bluemix TTS
+      - WATSON_TTS_APIKEY=${WATSON_TTS_APIKEY}
+      - WATSON_TTS_TOKEN_SERVICE_PROVIDER_URL=${PROV_URL}
+      - WATSON_TTS_URL=${TTS_URL}
+      - WATSON_TTS_VOICE=en-US_MichaelV2Voice
+      - ENABLE_RECORDING=true
+    # volumes:
+      # - ../bundle/recordings/caller:/vgw-media-relay/recordings
+      # - ./logs/caller-MR:/vgw-media-relay/logs
+
+  couchdb:
+    # container_name: testing-data
+    image: couchdb:2.3.0
+    # networks:
+    #   - tester-bundle
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=passw0rd
+    # volumes:
+    #   - ./couch-data:/opt/couchdb/data
+
+
+  sip.orchestrator.callee:
+    image: ${SO_IMAGE}
+
+    # container_name: voice-gateway-so-tested
+    # networks:
+    #   tester-bundle:
+    #     ipv4_address: 173.16.238.11
+    environment:
+      # Host name of the CMR.
+      - MEDIA_RELAY_HOST=media.relay.callee:8090
+      - SIP_HOST=sip.orchestrator.callee
+      - SIP_PORT=5070
+      - SIP_PORT_TCP=5070
+
+      # Uncomment and specify when the Conversation API is used
+      - WATSON_CONVERSATION_WORKSPACE_ID=${CALLEE_WORKSPACE_ID}
+      - WATSON_CONVERSATION_USERNAME=${CONV_USER}
+      - WATSON_CONVERSATION_PASSWORD=${CONV_PASS}
+      - WATSON_CONVERSATION_URL=${CONV_URL}
+      # Logging related variables
+      - ENABLE_TRANSCRIPTION_AUDIT_MESSAGES=true
+      - LOG_LEVEL=all
+      - WHITELIST_TO_URI=16152059388 # For using agent
+    # volumes:
+    #   - ./logs/callee-SO:/logs
+
+  media.relay.callee:
+    image: ${MR_IMAGE}
+
+    # container_name: voice-gateway-mr-tested
+    # networks:
+    #   - tester-bundle
+    environment:
+      - SDP_ADDRESS=media.relay.callee
+      - RTP_UDP_PORT_RANGE=16334-16394
+      - MEDIA_RELAY_LOG_LEVEL=DEBUG
+      - MEDIA_RELAY_WS_PORT=8090
+      - STT_TRACK_LATENCY=true
+
+      # Creds for Bluemix STT
+      - WATSON_STT_APIKEY=${WATSON_STT_APIKEY}
+      - WATSON_STT_TOKEN_SERVICE_PROVIDER_URL=${PROV_URL}
+      - WATSON_STT_URL=${STT_URL}
+
+      # Creds for Bluemix TTS
+      - WATSON_TTS_APIKEY=${WATSON_TTS_APIKEY}
+      - WATSON_TTS_TOKEN_SERVICE_PROVIDER_URL=${PROV_URL}
+      - WATSON_TTS_URL=${TTS_URL}
+      - WATSON_TTS_VOICE=en-US_AllisonV2Voice
+      - ENABLE_RECORDING=true
+    # volumes:
+    #   - ../bundle/recordings/callee:/vgw-media-relay/recordings
+    #   - ./logs/callee-MR:/vgw-media-relay/logs
+
+  tests:
+    # container_name: tests
+    image: ${DOCKER_PREFIX}-automated-tests:latest
+    build:
+      context: ./build-files
+    # networks:
+    #   - tester-bundle
+    environment:
+      - restCredentials=${restCredentials}
+      - couchCredentials=admin:passw0rd
+      - outboundCredentials=${outboundCredentials}
+
+# networks:
+#   tester-bundle:
+#     # name: tester-bundle
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: "173.16.238.0/24"

@@ -1,0 +1,8 @@
+{
+    "iterations":1,
+    "namespace":"test",
+    "callDefinition":{
+        "to":"string",
+        "from":"string"
+    }
+}

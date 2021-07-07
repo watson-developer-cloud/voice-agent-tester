@@ -1,0 +1,15 @@
+{
+    "namespace": "test",
+    "turns": [
+      {
+        "receive": {
+          "type": "string",
+          "value": "hello"
+        },
+        "send": {
+          "type": "string",
+          "value": "hello"
+        }
+      }
+    ]
+  }
