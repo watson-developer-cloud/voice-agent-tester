@@ -1,4 +1,6 @@
-FROM watson-vg-docker-local.artifactory.swg-devops.com/websphere-liberty-embedders-ubi8:200011
+FROM ibmcom/websphere-liberty:20.0.0.11-full-java8-ibmjava-ubi
+
+USER root
 
 LABEL name="voice-agent-tester" \
       vendor="IBM" \
@@ -37,7 +39,7 @@ COPY build/libs/va-tester-api.war /config/apps/va-tester-api.war
 COPY ["src/main/wlp/server.xml", "src/main/wlp/jvm.options", "/config/"]
 COPY src/main/resources/cloudant /config/resources/cloudant
 COPY src/main/wlp/security/server-security-incl.xml /config/resources/includeConfig/
-COPY licenses /licenses
+COPY LICENSE /licenses
 
 # Set default language to English
 ENV LANG=en_US.UTF-8 \
@@ -89,28 +91,4 @@ ENV LANG=en_US.UTF-8 \
     CALLER_VOICE_GATEWAY_PASSWORD=null \
     CLOUDANT_DATABASE_NAME=null
 
-RUN useradd -u 1001 -r -g 0 -s /sbin/nologin default \
-    && mkdir -p /logs \
-    && mkdir -p /home/default \
-    && mkdir -p /sslconf \
-    && chmod -t /output \
-    && rm -rf /output \
-    && ln -s $WLP_OUTPUT_DIR/defaultServer /output \
-    && ln -s /opt/ibm/wlp/usr/servers/defaultServer /config \
-    && ln -s /opt/ibm /liberty \
-    && chown -R 1001:0 /opt/ibm/wlp \
-    && chmod -R g+rw /opt/ibm/wlp \
-    && chown -R 1001:0 /config \
-    && chmod -R g+rw /config \
-    && chown -R 1001:0 /opt/ibm/wlp/usr \
-    && chmod -R g+rw /opt/ibm/wlp/usr \
-    && chown -R 1001:0 /opt/ibm/wlp/output \
-    && chmod -R g+rw /opt/ibm/wlp/output \
-    && chown -R 1001:0 /logs \
-    && chmod -R g+rw /logs \
-    && chown -R 1001:0 /sslconf \
-    && chmod -R g+rw /sslconf \
-    && chown -R 1001:0 /home/default \
-    && chmod -R g+rw /home/default
-
-USER 1001
+USER default

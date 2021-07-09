@@ -14,12 +14,7 @@ The Microservice provides users the following capabilities:
 
 ## Setting up using docker
 
-You can take the example docker-compose.yml file which includes a SIP Orchestrator which will drive the outbound calls, Media Relay, Couch Database for data persitence, Agent Tester Microservice and an Agent Insights dashboard (optional to see how the tester/testee behaved). Fill out the variables for your services or create a .env file and fill in the variables there. The necessary variables for using the microservice are as stated below. For details of the variables look at the Environment Variable Configuration section
-
-* CLOUDANT_URL **OR** CLOUDANT_ACCOUNT
-* CLOUDANT_USERNAME and CLOUDANT_PASSWORD **OR** CLOUDANT_APIKEY
-* CLOUDANT_DATABASE_NAME
-* CALLER_VOICE_GATEWAY_URI
+You can take the example docker-compose.yml file which includes a SIP Orchestrator which will drive the outbound calls, Media Relay and Couch Database for data persitence. Fill out the variables for your services or create a .env file and fill in the variables there. The necessary variables for using the microservice are as stated below. For details of the variables look at the Environment Variable Configuration section
 
 On the command line run:
 
@@ -102,11 +97,11 @@ Environment variable name   | Default value   | Description   |
 
 ### Outbound calls to a phone number
 
-If you wish to test against a Voice Agent with Watson service you would need to configure a SIP trunk which will make the call to the phone number associated with the voice agent. Here is and examples for setting one up with Twilio
+If you wish to test against a Watson Assistant that is using a Phone Integration you would need to configure a SIP trunk which will make the call to the phone number associated with the Assistant. Here is and examples for setting one up with Twilio
 
-  1. You would need to have a Twilio account set up (trial account will not work for this)
+  1. You would need to have a Twilio account set up (trial account will not work for this) or some other SIP trunking service provider that is Allow Listed with Watson Assistant.
 
-  2. Create a SIP trunk on your account and in the SIP trunk add a termination and whitelist the IP of the Caller Voice Gateway. Make note of the termination sip uri that you created
+  2. For Twilio create a SIP trunk on your account and in the SIP trunk add a termination and allow list the IP of the Voice Agent Tester Voice Gateway. Make note of the termination sip uri that you created
 
   3. When creating a worker, inside the call definition set the 'to' following this format `sip:+<Voice_Agent_Number>@<Termination_SIP_URI_of_trunk>`
 

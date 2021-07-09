@@ -1,4 +1,4 @@
-version: "3.5"
+version: "3.6"
 services:
 
   va.testing.microservice:
@@ -36,7 +36,7 @@ services:
       - ./bundle/tester_credentials:/custom_registry
     
   sip.orchestrator:
-    image: ibmcom/voice-gateway-so:1.0.1.0
+    image: ibmcom/voice-gateway-so:latest
     container_name: voice-gateway-so-tester
     networks:
       - tester-bundle
@@ -63,7 +63,7 @@ services:
       - ./bundle/logs/SO:/logs
 
   media.relay:
-    image: ibmcom/voice-gateway-mr:1.0.1.0
+    image: ibmcom/voice-gateway-mr:latest
     container_name: voice-gateway-mr-tester
     networks:
       - tester-bundle
@@ -95,7 +95,7 @@ services:
 
   couchdb:
     container_name: testing-data
-    image: apache/couchdb:2.3.0
+    image: apache/couchdb:2.3.1
     networks:
       - tester-bundle
     restart: always
@@ -107,33 +107,6 @@ services:
     volumes:
       - ./bundle/couchdb/couchDbData:/opt/couchdb/data
 
-  
-  va.insights:
-    container_name: tester-insights
-    image: ibmcom/voice-agent-insights:alpha.0.0.4
-    networks:
-      - tester-bundle
-    ports:
-      - "8000:9080"
-      - "8443:9443"
-      
-    environment:
-      
-      - CONFIG_FILE_PATH=/config/resources/security/credentials/testerResources.json
-      - LICENSED_FOR_PRODUCTION_USE=false
-      - ENABLE_TRANSCRIPTION_MESSAGES=false
-
-      # Uncomment and specify your own username and password to override the default
-      - BASIC_REGISTRY_USERNAME=admin
-      - BASIC_REGISTRY_PASSWORD=ATAAAAAI9Q5GkTQ+bzRAAAAAIOzZVGBjn+gJ7flyrhEq9qXcEGes0hqTVSeRxazhUqgM
-      #Logging
-      - LOG_LEVEL=all
-      - LOG_MAX_FILE_SIZE=100
-      - LOG_MAX_FILES=10
-      
-    volumes:
-      - "./bundle/insights_credentials:/config/resources/security/credentials"
-      - "./bundle/logs/insights:/logs" 
 networks:
   tester-bundle:
     name: tester-bundle
