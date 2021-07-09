@@ -76,15 +76,17 @@ services:
       - MEDIA_RELAY_WS_PORT=8080
       - STT_TRACK_LATENCY=true
 
-      # Creds for Bluemix STT
+      # API Key of your IBM Cloud Speech-To-Text Service instance
       - WATSON_STT_APIKEY=${WATSON_STT_APIKEY}
-      - WATSON_STT_TOKEN_SERVICE_PROVIDER_URL=https://iam.bluemix.net/identity/token
-      - WATSON_STT_URL=https://gateway-wdc.watsonplatform.net/speech-to-text/api
+      # URL of your IBM Cloud Speech-To-Text Service instance
+      - WATSON_STT_URL=
 
-      # Creds for Bluemix TTS
-      - WATSON_TTS_APIKEY=${WATSON_TTS_APIKEY}
-      - WATSON_TTS_TOKEN_SERVICE_PROVIDER_URL=https://iam.bluemix.net/identity/token
-      - WATSON_TTS_URL=https://gateway-wdc.watsonplatform.net/text-to-speech/api
+
+      # API Key of your IBM Cloud Text-To-Speech Service instance
+      - WATSON_TTS_APIKEY=
+      # URL of your IBM Cloud Text-To-Speech Service instance
+      - WATSON_TTS_URL=
+
       - WATSON_TTS_VOICE=en-US_MichaelV2Voice
       
       # Comment to disable recording
